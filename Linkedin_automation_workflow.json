@@ -1,0 +1,652 @@
+{
+  "name": "linkedin_automation_project",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "=0 9,13,19 * * *"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -784,
+        -320
+      ],
+      "id": "ae3cff19-5e35-4c27-ae13-f717669d4165",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c4334669-b6f7-4541-8172-7ed06cae11ac",
+              "leftValue": "={{ $json.Status }}",
+              "rightValue": "Pending",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -224,
+        16
+      ],
+      "id": "33d4afea-e632-4f5b-a542-c0e0c4d7d4ce",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e42a7f63-7af0-41d5-be7d-f70dadc65d61",
+              "name": "Topics",
+              "value": "={{ $json.Topics }}",
+              "type": "string"
+            },
+            {
+              "id": "5b884f68-a3b5-4d1b-a6f1-46e33e5b44a8",
+              "name": "Status",
+              "value": "={{ $json.Status }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -448,
+        16
+      ],
+      "id": "bbe3129d-f3cb-4f0f-ad4c-1d18cc6d453d",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        0
+      ],
+      "id": "f8b8f47f-1117-48f7-a757-649dc3d15213",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {
+          "maxTokensToSample": 4096
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -864,
+        1472
+      ],
+      "id": "0377fb1d-abed-451e-b9e0-ad4accf3cd7e",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "fM35otvBhDpMCxfN",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1BFm_PQmmKc3u43Woo3gbCp6cI-mTnTcZ5m98w27M1RY",
+          "mode": "list",
+          "cachedResultName": "Linkedin_topics",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BFm_PQmmKc3u43Woo3gbCp6cI-mTnTcZ5m98w27M1RY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BFm_PQmmKc3u43Woo3gbCp6cI-mTnTcZ5m98w27M1RY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Topics": "={{ $('Limit').first().json.Topics }}",
+            "Status": "Uploaded"
+          },
+          "matchingColumns": [
+            "Topics"
+          ],
+          "schema": [
+            {
+              "id": "Topics",
+              "displayName": "Topics",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1072,
+        -48
+      ],
+      "id": "6b0ae4b3-9eb5-4606-92ee-e10b2aafe6d0",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "fCOGgq8sHwPiLa7x",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1BFm_PQmmKc3u43Woo3gbCp6cI-mTnTcZ5m98w27M1RY",
+          "mode": "list",
+          "cachedResultName": "Linkedin_topics",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BFm_PQmmKc3u43Woo3gbCp6cI-mTnTcZ5m98w27M1RY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BFm_PQmmKc3u43Woo3gbCp6cI-mTnTcZ5m98w27M1RY/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1248,
+        -48
+      ],
+      "id": "5f6cd5e1-b6ce-4ea8-9f7f-222d21f568bf",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "fCOGgq8sHwPiLa7x",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "70078d55-f2bf-46a1-9fd3-04dc39700e42",
+              "leftValue": "={{ $input.all().every(item => item.json.Status === 'Uploaded') }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1424,
+        -48
+      ],
+      "id": "4de7897f-eaa9-4625-8d36-921608cdfdcd",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "content": "Executing Workflow",
+        "height": 224,
+        "width": 208
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -880,
+        -64
+      ],
+      "typeVersion": 1,
+      "id": "22fbbd8f-fa88-4700-b275-5527867e7f20",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "Getting topics and structuring it\n",
+        "height": 224,
+        "width": 352,
+        "color": "#454545"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -640,
+        -64
+      ],
+      "typeVersion": 1,
+      "id": "2a4f85fa-3386-4457-a5c2-fb3ed486f490",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "Applying condition and taking only pending topics",
+        "height": 224,
+        "width": 352,
+        "color": "#245650"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -256,
+        -64
+      ],
+      "typeVersion": 1,
+      "id": "94ce6da6-e169-4007-84b0-abd49ced1a81",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "Gathering real information from internet\n",
+        "height": 224,
+        "width": 208,
+        "color": "#662424"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        112,
+        -64
+      ],
+      "typeVersion": 1,
+      "id": "25ab4c2d-3ffe-4e2d-891d-e3fadb6f305c",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "query": "={{ $json.Topics }}",
+        "options": {
+          "max_results": 2
+        }
+      },
+      "type": "@tavily/n8n-nodes-tavily.tavily",
+      "typeVersion": 2.1,
+      "position": [
+        144,
+        32
+      ],
+      "id": "8cf15f96-344b-44b3-ad3e-df2ec42f7e5d",
+      "name": "Internet searching",
+      "credentials": {
+        "tavilyApi": {
+          "id": "984Yjwv9s6w7KkcP",
+          "name": "Tavily account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1BFm_PQmmKc3u43Woo3gbCp6cI-mTnTcZ5m98w27M1RY",
+          "mode": "list",
+          "cachedResultName": "Linkedin_topics",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BFm_PQmmKc3u43Woo3gbCp6cI-mTnTcZ5m98w27M1RY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BFm_PQmmKc3u43Woo3gbCp6cI-mTnTcZ5m98w27M1RY/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -608,
+        16
+      ],
+      "id": "14a5c2a4-e2b1-47e6-b099-530bbd2c8c27",
+      "name": "Getting Topics",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "fCOGgq8sHwPiLa7x",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -832,
+        16
+      ],
+      "id": "cdfa5d16-0a25-4989-8670-76cec34f744d",
+      "name": "Start the workflow"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a professional LinkedIn post writer and content strategist.\n\nYou will receive:\n1. A topic.\n2. Research information retrieved by Tavily.\n\nTOPIC:\n{{ $('Limit').item.json.Topics }}\n\nTAVILY RESEARCH:\n{{ JSON.stringify($json.results || []) }}\n\nYOUR TASK:\n\nRead and understand the research provided by Tavily. Transform that information into an engaging, informative, professional LinkedIn post.\n\nFOLLOW THIS STRUCTURE:\n\n1. HOOK:\nStart with a powerful and attention-grabbing opening related to the topic or latest development.\n\n2. MAIN CONTENT:\nWrite 3–4 informative paragraphs.\nExplain the research in simple language.\nHighlight important developments, facts, benefits, challenges, and industry implications.\nMake the content valuable for professionals and business audiences.\n\n3. ENGAGEMENT:\nEnd with an interesting question that encourages readers to share their opinions.\n\n4. HASHTAGS:\nInclude 4–6 relevant hashtags at the end.\n\nFORMATTING RULES:\n\n- Use 3–5 relevant emojis naturally.\n- Separate paragraphs with two newline characters.\n- Keep the post under 3000 characters.\n- Use simple, natural and professional English.\n- Avoid unnecessary technical jargon.\n- Do not repeat information.\n- Do not invent facts or statistics.\n- Include the original source URL when relevant and available.\n- Never mention Tavily or the research process.\n\nIMPORTANT:\nDo not perform additional research.\nDo not search the internet.\nDo not return a research summary.\nYour only job is to transform the provided topic and research into a complete LinkedIn post.\n\nReturn ONLY the final LinkedIn post.",
+        "options": {
+          "maxIterations": 7
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        384,
+        -48
+      ],
+      "id": "ebf55de3-a0ac-4a75-97e2-7f32f06170bc",
+      "name": "Writting post"
+    },
+    {
+      "parameters": {
+        "content": "Post Creation\n",
+        "height": 352,
+        "width": 352,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        352,
+        -112
+      ],
+      "typeVersion": 1,
+      "id": "00a8fbbb-20fe-41de-9e6f-0a0e14b8a4ef",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "options": {
+          "maxOutputTokens": 2000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        384,
+        128
+      ],
+      "id": "edb4646f-72b8-4061-b52e-e0ce7f56899e",
+      "name": "Chat model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ozi7Mq3UN4jbViAO",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Linkedin Posting",
+        "height": 208,
+        "color": "#1C0B4B"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        736,
+        -96
+      ],
+      "typeVersion": 1,
+      "id": "32d1aa95-baf8-4d20-80c2-74b08b4c9e79",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "person": "bRZ38g9TNT",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "visibility": "PUBLIC"
+        }
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        800,
+        -48
+      ],
+      "id": "0d68142d-d74a-4a0b-9251-7f60d0212ca0",
+      "name": "Post",
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "m7NYf87UKbe1vr1G",
+          "name": "LinkedIn account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Updating the Current Topic sheet from **Pending**  to **Posted**",
+        "height": 240,
+        "width": 624,
+        "color": "#116E2D"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1024,
+        -112
+      ],
+      "typeVersion": 1,
+      "id": "55847f14-1326-4178-b782-56121c821156",
+      "name": "Sticky Note6"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Internet searching",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        []
+      ]
+    },
+    "Internet searching": {
+      "main": [
+        [
+          {
+            "node": "Writting post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Getting Topics": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start the workflow": {
+      "main": [
+        [
+          {
+            "node": "Getting Topics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Writting post": {
+      "main": [
+        [
+          {
+            "node": "Post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chat model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Writting post",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "timezone": "Asia/Kolkata",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "2121f598-59be-48a1-a5dc-08cf05b4ccaf",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cec372a15ac57a3bf4022ecd694ef0e7bd2ed2189234d50ef323bc711301ee56"
+  },
+  "nodeGroups": [],
+  "id": "obOhpOyDkyUxXwIm",
+  "tags": []
+}
